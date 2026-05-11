@@ -85,7 +85,7 @@ var parseLiveData = function(data) {
       else if (fn === 5)  power   = r.v;                        // W
       else if (fn === 10) battery = r.v;                        // %
       else if (fn === 12) odo     = (r.v / 1000) | 0;          // km (integer)
-      else if (fn === 17) light   = r.v === 2 ? 1 : r.v === 1 ? 0 : undefined; // 2=auto→1, 1=on→0, 0=off→undef
+      else if (fn === 17) light   = r.v !== 0 ? 1 : 0;  // any active state (on/auto) → 1, off → 0
       else if (fn === 22) charger = r.v;                        // 0/1
     } else if (wt === 2) {
       // length-delimited field (string/bytes/embedded message) — skip
