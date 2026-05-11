@@ -1,0 +1,22 @@
+{
+  "name": "Bosch eBike",
+  "version": "1.0",
+  "author": "Michele",
+  "description": "Bosch eBike Live Data Interface",
+  "type": "device",
+  "usage": "workout",
+  "modificationTime": 1746921600,
+  "template": [
+    { "name": "t.html" }
+  ],
+  "out": [
+    { "name": "con" },
+    { "name": "speed",   "log": true, "shownName": "Vel. eBike km/h",  "format": "Count_Threedigits" },
+    { "name": "cadence", "log": true, "shownName": "Cadenza rpm",       "format": "Count_Threedigits" },
+    { "name": "power",   "log": true, "shownName": "Potenza W",         "format": "Count_Fourdigits"  },
+    { "name": "battery", "log": true, "shownName": "Batteria %",        "format": "Count_Threedigits" },
+    { "name": "odo" },
+    { "name": "charger" },
+    { "name": "light" }
+  ]
+}

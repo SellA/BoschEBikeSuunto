@@ -1,0 +1,85 @@
+<!-- Bosch eBike – 7 campi, griglia 2x3, schermo circolare -->
+<uiView>
+  <div id="suuntoplus">
+
+    <!-- Separatore verticale (tutta l'altezza) -->
+    <div class="cm-fg p-hc" style="top:4%;width:2px;height:88%;opacity:0.3;"></div>
+
+    <!-- Separatore orizzontale 1 (tra riga 1 e 2) -->
+    <div class="cm-fg" style="top:34%;left:8%;width:84%;height:1px;opacity:0.3;"></div>
+
+    <!-- Separatore orizzontale 2 (tra riga 2 e 3) -->
+    <div class="cm-fg" style="top:67%;left:8%;width:84%;height:1px;opacity:0.3;"></div>
+
+    <!-- Riga 1 sx: Velocità -->
+    <div style="top:calc(15% - 100%e);left:calc(28% - 50%e);">
+      <span class="sp-t-s">VEL km/h</span>
+    </div>
+    <div style="top:calc(24% - 50%e);left:calc(28% - 50%e);">
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/speed" outputFormat="Count_Threedigits" default="--" />
+      </span>
+    </div>
+
+    <!-- Riga 1 dx: Cadenza -->
+    <div style="top:calc(15% - 100%e);left:calc(72% - 50%e);">
+      <span class="sp-t-s">CAD rpm</span>
+    </div>
+    <div style="top:calc(24% - 50%e);left:calc(72% - 50%e);">
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/cadence" outputFormat="Count_Threedigits" default="--" />
+      </span>
+    </div>
+
+    <!-- Riga 2 sx: Potenza -->
+    <div style="top:calc(47% - 100%e);left:calc(28% - 50%e);">
+      <span class="sp-t-s">POT W</span>
+    </div>
+    <div style="top:calc(56% - 50%e);left:calc(28% - 50%e);">
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/power" outputFormat="Count_Fourdigits" default="--" />
+      </span>
+    </div>
+
+    <!-- Riga 2 dx: Batteria -->
+    <div style="top:calc(47% - 100%e);left:calc(72% - 50%e);">
+      <span class="sp-t-s">BAT %</span>
+    </div>
+    <div style="top:calc(56% - 50%e);left:calc(72% - 50%e);">
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/battery" outputFormat="Count_Threedigits" default="--" />
+      </span>
+    </div>
+
+    <!-- Riga 3 sx: Odometro -->
+    <div style="top:calc(78% - 100%e);left:calc(28% - 50%e);">
+      <span class="sp-t-s">ODO km</span>
+    </div>
+    <div style="top:calc(87% - 50%e);left:calc(28% - 50%e);">
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/odo" outputFormat="Count_Fivedigits" default="--" />
+      </span>
+    </div>
+
+    <!-- Riga 3 dx-sx: Carica (⚡) -->
+    <div style="top:calc(78% - 100%e);left:calc(62% - 50%e);">
+      <span class="sp-t-s">&#9889;</span>
+    </div>
+    <div style="top:calc(87% - 50%e);left:calc(62% - 50%e);">
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/charger" outputFormat="Count_Threedigits" default="--" />
+      </span>
+    </div>
+
+    <!-- Riga 3 dx-dx: Luce (🔦) -->
+    <div style="top:calc(78% - 100%e);left:calc(80% - 50%e);">
+      <span class="sp-t-s">&#128294;</span>
+    </div>
+    <div style="top:calc(87% - 50%e);left:calc(80% - 50%e);">
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/light" outputFormat="Count_Threedigits" default="--" />
+      </span>
+    </div>
+
+  </div>
+</uiView>
