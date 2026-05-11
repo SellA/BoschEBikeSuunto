@@ -34,30 +34,37 @@ Any Suunto watch that supports **SuuntoPlus** (Zapp) apps:
 ## Requirements
 
 - The **ESP32 bridge** must be running and connected to the bike (or in simulation mode). See [BoschEBikeESP32](https://github.com/SellA/BoschEBikeESP32).
-- **Suunto app** on iOS or Android (to sideload the `.dev` file onto the watch).
+- **Visual Studio Code** with the **SuuntoPlus Editor** extension installed.
+- A Suunto watch that supports SuuntoPlus, paired via Bluetooth to the PC.
 
 ## Installation on the Suunto watch
 
-### Method 1 — Suunto app (recommended)
+SuuntoPlus apps are deployed from VS Code directly to the watch over Bluetooth using the **SuuntoPlus Editor** extension.
 
-1. Download the latest `.dev` file from this repository (`bosche01-s.dev` is the most recent version)
-2. Transfer the `.dev` file to your phone (AirDrop, Google Drive, email, etc.)
-3. On your phone, open the `.dev` file with the **Suunto app** — it will offer to install the app on your paired watch
-4. Confirm the installation on the watch
+### 1. Install the SuuntoPlus Editor extension
 
-### Method 2 — USB (Windows)
+Download and install the extension in VS Code:
+[marketplace.visualstudio.com/items?itemName=Suunto.suuntoplus-editor](https://marketplace.visualstudio.com/items?itemName=Suunto.suuntoplus-editor)
 
-1. Connect the Suunto watch to your PC via USB
-2. The watch appears as a USB drive
-3. Copy the `.dev` file to the `\Suunto\Apps\` folder on the watch
-4. Eject the watch safely and restart it
+### 2. Open the project
 
-### Activating during a workout
+Open the `BoschEBikeSuunto` folder in VS Code. The SuuntoPlus Editor will detect the `manifest.json` and recognize it as a SuuntoPlus app.
+
+### 3. Deploy to watch
+
+> **Important:** disable syncing in the Suunto mobile app before deploying — if it syncs during development it will overwrite the test app on the watch.
+
+1. Make sure the watch is paired via Bluetooth to the PC
+2. Open the VS Code Command Palette (`Ctrl+Shift+P`)
+3. Run **`SuuntoPlus: Deploy to Watch`**
+4. Follow the on-screen prompts to confirm the installation on the watch
+
+### Using during a workout
 
 1. Start a new exercise on the watch
-2. Swipe to the SuuntoPlus data screen
-3. Add **Bosch eBike** from the app list (first time only)
-4. The watch searches for the BLE device named `BoschEBike` and connects automatically
+2. Swipe to the SuuntoPlus data screens
+3. Select the **Bosch eBike** screen (first time only — it will be listed in the available apps)
+4. The watch automatically scans for a BLE device advertising the LDI UUID and connects to the ESP32 bridge (`BoschEBike`)
 
 ## File overview
 
@@ -84,12 +91,13 @@ Bosch eBike ──► ESP32 Bridge ──BLE LDI──► Suunto watch
 
 ## Building a new `.dev` package
 
-`.dev` files are ZIP archives containing the app sources. To build one from source, use the [Suunto Developer Tools](https://www.suunto.com/en-gb/Support/software-support/suuntoplus-apps/) or the official Suunto CLI packager:
+Use the SuuntoPlus Editor in VS Code:
 
-```bash
-zip -j bosche01-new.dev manifest.json main.js ext1.js ext2.js t.html
-mv bosche01-new.dev bosche01-new.dev  # rename with your version suffix
-```
+1. Open the Command Palette (`Ctrl+Shift+P`)
+2. Run **`SuuntoPlus: Build Sports App`**
+3. The extension validates, minifies, and packages the sources into a `.dev` file
+
+Fix any warnings reported before distributing.
 
 ## Related
 
