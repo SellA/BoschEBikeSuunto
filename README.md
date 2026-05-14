@@ -6,17 +6,35 @@ The app connects over BLE to the ESP32 bridge using the Bosch LDI service UUID a
 
 ## Displayed data
 
-| Field | Unit | Description |
-|---|---|---|
-| VEL | km/h | Speed |
-| CAD | rpm | Cadence |
-| POT | W | Motor power |
-| BAT | % | Battery state of charge |
-| ODO | km | Total odometer |
-| ⚡ | — | Charger connected (0/1) |
-| 🔦 | — | Light state (0=off, 1=on) |
+Live watch face (2×3 grid):
 
-Summary screen at end of exercise shows max/avg cadence and max/avg power.
+| Label | Unit | Description |
+|---|---|---|
+| Cad | rpm | Cadence |
+| Spd | km/h | Speed |
+| Pow | W | Motor power |
+| Bat | % | Battery state of charge |
+| Odo | km | Total odometer |
+
+Post-workout summary screen:
+
+| Field | Description |
+|---|---|
+| Max cadence | Peak cadence recorded during the exercise |
+| Avg cadence | Average cadence over the exercise |
+| Max power | Peak motor power recorded |
+| Avg power | Average motor power over the exercise |
+
+## Decoded but not displayed
+
+These fields are decoded from the BLE payload and available as output fields,
+but are not shown on the current watch face. They can be added to `t.html`
+or used in a future layout:
+
+| Output field | Protobuf field | Description |
+|---|---|---|
+| `charger` | 22 | Charger connected (0 = no, 1 = yes) |
+| `light` | 17 | Bike light state (0 = off, 1 = on or auto) |
 
 ## Compatible Suunto watches
 
