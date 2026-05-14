@@ -4,6 +4,8 @@ SuuntoPlus (Zapp) app for Suunto watches that displays live data from a **Bosch 
 
 The app connects over BLE to the ESP32 bridge using the Bosch LDI service UUID and parses the protobuf payload directly on the watch.
 
+![Watch face](Screenshot.png)
+
 ## Displayed data
 
 Live watch face (2×3 grid):
