@@ -1,73 +1,61 @@
-<!-- Bosch eBike – 6 fields, 2×3 grid, circular display -->
+<!-- Bosch eBike – 5 fields, 2×3 grid, circular display -->
 <uiView>
-  <div id="suuntoplus">
+  <div id="suuntoplus"
+    style="--dbg: none;">
+    <!--style="--dbg: 1px solid rgba(255, 80, 80, 0.7);">-->
+    <!--              ↑ change to "none" to hide all debug borders          -->
 
     <!-- Vertical center divider -->
-    <div class="cm-fg p-hc" style="top:4%;width:2px;height:88%;opacity:0.3;"></div>
+    <div class="cm-fg p-hc" style="top:0%;width:2px;height:66%;opacity:0.3;"></div>
 
     <!-- Horizontal separator 1 (between row 1 and 2) -->
-    <div class="cm-fg" style="top:37%;left:8%;width:84%;height:1px;opacity:0.3;"></div>
+    <div class="cm-fg" style="top:33%;left:0%;width:100%;height:1px;opacity:0.3;"></div>
 
     <!-- Horizontal separator 2 (between row 2 and 3) -->
-    <div class="cm-fg" style="top:65%;left:8%;width:84%;height:1px;opacity:0.3;"></div>
+    <div class="cm-fg" style="top:66%;left:0%;width:100%;height:1px;opacity:0.3;"></div>
 
-    <!-- Row 1 left: Speed -->
-    <div style="top:calc(21% - 100%e);left:calc(28% - 50%e);">
-      <span class="sp-t-s">VEL km/h</span>
-    </div>
-    <div style="top:calc(30% - 50%e);left:calc(28% - 50%e);">
-      <span class="sp-d-s f-num">
-        <eval input="Zapp/{zapp_index}/Output/speed" outputFormat="Count_Threedigits" default="--" />
-      </span>
-    </div>
-
-    <!-- Row 1 right: Cadence -->
-    <div style="top:calc(21% - 100%e);left:calc(72% - 50%e);">
-      <span class="sp-t-s">CAD rpm</span>
-    </div>
-    <div style="top:calc(30% - 50%e);left:calc(72% - 50%e);">
+    <!-- Row 1 left: Cadence -->
+    <div style="top:1%;left:calc(48% - 100%e);display:flex;flex-direction:column;align-items:flex-end;outline:var(--dbg);">
+      <span class="sp-t-s">Cad</span>
+      <span class="sp-t-xs">[rpm]</span>
       <span class="sp-d-s f-num">
         <eval input="Zapp/{zapp_index}/Output/cadence" outputFormat="Count_Threedigits" default="--" />
       </span>
     </div>
 
-    <!-- Row 2 left: Power -->
-    <div style="top:calc(49% - 100%e);left:calc(28% - 50%e);">
-      <span class="sp-t-s">POT W</span>
-    </div>
-    <div style="top:calc(57% - 50%e);left:calc(28% - 50%e);">
+    <!-- Row 1 right: Speed -->
+    <div style="top:1%;left:calc(52%);display:flex;flex-direction:column;align-items:flex-start;outline:var(--dbg);">
+      <span class="sp-t-s">Spd</span>
+      <span class="sp-t-xs">[km/h]</span>
       <span class="sp-d-s f-num">
-        <eval input="Zapp/{zapp_index}/Output/power" outputFormat="Count_Fourdigits" default="--" />
+        <eval input="Zapp/{zapp_index}/Output/speed" outputFormat="Count_Threedigits" default="--" />
+      </span>
+    </div>
+
+    <!-- Row 2 left: Power -->
+    <div style="top:34%;left:calc(48% - 100%e);display:flex;flex-direction:column;align-items:flex-end;outline:var(--dbg);">
+      <span class="sp-t-s">Pow</span>
+      <span class="sp-t-xs">[w]</span>
+      <span class="sp-d-s f-num">
+        <eval input="Zapp/{zapp_index}/Output/power" outputFormat="Count_Threedigits" default="--" />
       </span>
     </div>
 
     <!-- Row 2 right: Battery -->
-    <div style="top:calc(49% - 100%e);left:calc(72% - 50%e);">
-      <span class="sp-t-s">BAT %</span>
-    </div>
-    <div style="top:calc(57% - 50%e);left:calc(72% - 50%e);">
+    <div style="top:34%;left:calc(52%);display:flex;flex-direction:column;align-items:flex-end;outline:var(--dbg);">
+      <span class="sp-t-s">Bat</span>
+      <span class="sp-t-xs">[%]</span>
       <span class="sp-d-s f-num">
         <eval input="Zapp/{zapp_index}/Output/battery" outputFormat="Count_Threedigits" default="--" />
       </span>
     </div>
 
-    <!-- Row 3 left: Odometer -->
-    <div style="top:calc(72% - 100%e);left:calc(28% - 50%e);">
-      <span class="sp-t-s">ODO km</span>
-    </div>
-    <div style="top:calc(80% - 50%e);left:calc(28% - 50%e);">
+    <!-- Row 3 center: Odometer -->
+    <div style="top:67%;left:calc(50% - 50%e);display:flex;flex-direction:column;align-items:center;text-align:center;outline:var(--dbg);">
+      <span class="sp-t-s">Odo</span>
+      <span class="sp-t-xs">[km]</span>
       <span class="sp-d-s f-num">
-        <eval input="Zapp/{zapp_index}/Output/odo" outputFormat="Count_Fivedigits" default="--" />
-      </span>
-    </div>
-
-    <!-- Row 3 right: Bike light state -->
-    <div style="top:calc(72% - 100%e);left:calc(72% - 50%e);">
-      <span class="sp-t-s">LIGHT</span>
-    </div>
-    <div style="top:calc(80% - 50%e);left:calc(72% - 50%e);">
-      <span class="sp-d-s f-num">
-        <eval input="Zapp/{zapp_index}/Output/light" outputFormat="Bool_OnOff" default="--" />
+        <eval input="Zapp/{zapp_index}/Output/odo" outputFormat="Count_Threedigits" default="--" />
       </span>
     </div>
 
