@@ -51,6 +51,7 @@ var maxPow, sumPow, cntPow;
 var powerBarMax, simSweepValue, simSweepDir;
 
 var SIMULATE_SWEEP = false;
+var SIMULATE_NO_EBIKE = false;
 
 var waitingState = 99, readyState = 10;
 var bridgeNoEbikeField = 100;
@@ -152,6 +153,11 @@ var writeLiveOutputs = function(output) {
   output.charger = charger;
   output.light   = light;
   output.noBike  = noBike || 0;
+  output.displaySpeed   = noBike ? undefined : speed;
+  output.displayCadence = noBike ? undefined : cadence;
+  output.displayPower   = noBike ? undefined : power;
+  output.displayBattery = noBike ? undefined : battery;
+  output.displayOdo     = noBike ? undefined : odo;
   output.powerBarLevel = powerToBarLevel(power);
   output.batteryBarLevel = percentToBarLevel(battery);
 };
@@ -192,11 +198,24 @@ var evaluateSimulation = function(output) {
   if (exerciseStarted) updateStats();
 };
 
+var evaluateNoEbikeSimulation = function(output) {
+  speed = cadence = power = battery = odo = charger = light = 0;
+  noBike = 1;
+  output.con = 1;
+  writeLiveOutputs(output);
+  if (exerciseStarted) updateStats();
+};
+
 /**
  * evaluate() — called by the Suunto runtime on every sensor tick.
  * Advances the state machine and writes decoded values to the output object.
  */
 function evaluate(input, output) {
+  if (SIMULATE_NO_EBIKE) {
+    evaluateNoEbikeSimulation(output);
+    return;
+  }
+
   if (SIMULATE_SWEEP) {
     evaluateSimulation(output);
     return;
@@ -225,6 +244,7 @@ function evaluate(input, output) {
       output.con = 0;
       speed = cadence = power = battery = odo = charger = light = undefined;
       output.speed = output.cadence = output.power = output.battery = output.odo = output.charger = output.light = undefined;
+      output.displaySpeed = output.displayCadence = output.displayPower = output.displayBattery = output.displayOdo = undefined;
       noBike = 0;
       output.noBike = 0;
       output.powerBarLevel = 0;
@@ -261,6 +281,7 @@ function onLoad(input, output) {
   output.con = exerciseStarted = registered = state = 0;
   speed = cadence = power = battery = odo = charger = light = undefined;
   output.speed = output.cadence = output.power = output.battery = output.odo = output.charger = output.light = undefined;
+  output.displaySpeed = output.displayCadence = output.displayPower = output.displayBattery = output.displayOdo = undefined;
   noBike = 0;
   output.noBike = 0;
   output.powerBarLevel = 0;

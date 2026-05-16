@@ -22,6 +22,11 @@
     { "name": "charger" },
     { "name": "light" },
     { "name": "noBike" },
+    { "name": "displaySpeed" },
+    { "name": "displayCadence" },
+    { "name": "displayPower" },
+    { "name": "displayBattery" },
+    { "name": "displayOdo" },
     { "name": "powerBarLevel" },
     { "name": "batteryBarLevel" }
   ]
