@@ -3,6 +3,7 @@
   onLoad="
     var powerBarSub;
     var batteryBarSub;
+    var noBikeSub;
 
     function updatePowerBar(level) {
       var i;
@@ -17,6 +18,15 @@
         setStyle('#bat-fill-' + i, 'visibility', level >= i ? 'VISIBLE' : 'HIDDEN');
       }
     }
+
+    function updateNoBike(active) {
+      var visibility = active ? 'VISIBLE' : 'HIDDEN';
+      setStyle('#nc-cad', 'visibility', visibility);
+      setStyle('#nc-spd', 'visibility', visibility);
+      setStyle('#nc-pow', 'visibility', visibility);
+      setStyle('#nc-bat', 'visibility', visibility);
+      setStyle('#nc-odo', 'visibility', visibility);
+    }
   "
   onActivate="
     powerBarSub = $.subscribe('Zapp/{zapp_index}/Output/powerBarLevel', function(level) {
@@ -25,10 +35,14 @@
     batteryBarSub = $.subscribe('Zapp/{zapp_index}/Output/batteryBarLevel', function(level) {
       updateBatteryBar(level || 0);
     });
+    noBikeSub = $.subscribe('Zapp/{zapp_index}/Output/noBike', function(active) {
+      updateNoBike(active || 0);
+    });
   "
   onDeactivate="
     $.unsubscribe(powerBarSub);
     $.unsubscribe(batteryBarSub);
+    $.unsubscribe(noBikeSub);
   ">
   <div id="suuntoplus"
     style="--dbg: none;">
@@ -98,6 +112,7 @@
     <div class="sp-d-m f-num" style="top:11%;left:calc(48% - 100%e);outline:var(--dbg);">
       <eval input="Zapp/{zapp_index}/Output/cadence" outputFormat="Count_Threedigits" default="--" />
     </div>
+    <div id="nc-cad" class="sp-d-m f-num" style="top:11%;left:calc(48% - 100%e);color:rgba(245,165,35,1);background-color:#000;visibility:hidden;outline:var(--dbg);">#NC</div>
 
     <!-- Row 1 right: Speed -->
     <div class="sp-t-s" style="top:1%;left:52%;outline:var(--dbg);">Spd</div>
@@ -105,6 +120,7 @@
     <div class="sp-d-m f-num" style="top:11%;left:52%;outline:var(--dbg);">
       <eval input="Zapp/{zapp_index}/Output/speed" outputFormat="Count_Threedigits" default="--" />
     </div>
+    <div id="nc-spd" class="sp-d-m f-num" style="top:11%;left:52%;color:rgba(245,165,35,1);background-color:#000;visibility:hidden;outline:var(--dbg);">#NC</div>
 
     <!-- Row 2 left: Power -->
     <div class="sp-t-s" style="top:34%;left:calc(48% - 100%e);outline:var(--dbg);">Pow</div>
@@ -112,6 +128,7 @@
     <div class="sp-d-m f-num" style="top:44%;left:calc(48% - 100%e);outline:var(--dbg);">
       <eval input="Zapp/{zapp_index}/Output/power" outputFormat="Count_Threedigits" default="--" />
     </div>
+    <div id="nc-pow" class="sp-d-m f-num" style="top:44%;left:calc(48% - 100%e);color:rgba(245,165,35,1);background-color:#000;visibility:hidden;outline:var(--dbg);">#NC</div>
 
     <!-- Row 2 right: Battery -->
     <div class="sp-t-s" style="top:34%;left:52%;outline:var(--dbg);">Bat</div>
@@ -119,6 +136,7 @@
     <div class="sp-d-m f-num" style="top:44%;left:52%;outline:var(--dbg);">
       <eval input="Zapp/{zapp_index}/Output/battery" outputFormat="Count_Threedigits" default="--" />
     </div>
+    <div id="nc-bat" class="sp-d-m f-num" style="top:44%;left:52%;color:rgba(245,165,35,1);background-color:#000;visibility:hidden;outline:var(--dbg);">#NC</div>
 
     <!-- Row 3 center: Odometer -->
     <div class="sp-t-s" style="top:67%;left:calc(50% - 50%e);outline:var(--dbg);">Odo</div>
@@ -126,5 +144,6 @@
     <div class="sp-d-m f-num" style="top:76%;left:calc(50% - 50%e);outline:var(--dbg);">
       <eval input="Zapp/{zapp_index}/Output/odo" outputFormat="Count_Threedigits" default="--" />
     </div>
+    <div id="nc-odo" class="sp-d-m f-num" style="top:76%;left:calc(50% - 50%e);color:rgba(245,165,35,1);background-color:#000;visibility:hidden;outline:var(--dbg);">#NC</div>
   </div>
 </uiView>

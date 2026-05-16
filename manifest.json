@@ -21,6 +21,7 @@
     { "name": "odo" },
     { "name": "charger" },
     { "name": "light" },
+    { "name": "noBike" },
     { "name": "powerBarLevel" },
     { "name": "batteryBarLevel" }
   ]

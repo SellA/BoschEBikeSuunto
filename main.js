@@ -45,14 +45,15 @@
  */
 
 var connection, registered, exerciseStarted, state;
-var speed, cadence, power, battery, odo, charger, light, ext;
+var speed, cadence, power, battery, odo, charger, light, noBike, ext;
 var maxCad, sumCad, cntCad;
 var maxPow, sumPow, cntPow;
 var powerBarMax, simSweepValue, simSweepDir;
 
-var SIMULATE_SWEEP = true;
+var SIMULATE_SWEEP = false;
 
 var waitingState = 99, readyState = 10;
+var bridgeNoEbikeField = 100;
 
 /**
  * Decode a protobuf varint from a byte array.
@@ -76,6 +77,7 @@ var readVarint = function(data, pos) {
  */
 var parseLiveData = function(data) {
   var pos = 0, r, fn, wt;
+  noBike = 0;
   while (pos < data.length) {
     r = readVarint(data, pos); pos = r.p;
     fn = r.v >> 3;   // field number (upper bits of tag)
@@ -90,6 +92,7 @@ var parseLiveData = function(data) {
       else if (fn === 12) odo     = (r.v / 1000) | 0;          // km (integer)
       else if (fn === 17) light   = r.v !== 0 ? 1 : 0;  // any active state (on/auto) → 1, off → 0
       else if (fn === 22) charger = r.v;                        // 0/1
+      else if (fn === bridgeNoEbikeField) noBike = r.v ? 1 : 0; // ESP32 bridge: eBike link down
     } else if (wt === 2) {
       // length-delimited field (string/bytes/embedded message) — skip
       r = readVarint(data, pos); pos = r.p + r.v;
@@ -148,6 +151,7 @@ var writeLiveOutputs = function(output) {
   output.odo     = odo;
   output.charger = charger;
   output.light   = light;
+  output.noBike  = noBike || 0;
   output.powerBarLevel = powerToBarLevel(power);
   output.batteryBarLevel = percentToBarLevel(battery);
 };
@@ -181,6 +185,7 @@ var evaluateSimulation = function(output) {
   odo = ((simSweepValue * 999) / maxPower) | 0;
   charger = 0;
   light = power > (maxPower / 2) ? 1 : 0;
+  noBike = 0;
 
   output.con = 1;
   writeLiveOutputs(output);
@@ -220,6 +225,8 @@ function evaluate(input, output) {
       output.con = 0;
       speed = cadence = power = battery = odo = charger = light = undefined;
       output.speed = output.cadence = output.power = output.battery = output.odo = output.charger = output.light = undefined;
+      noBike = 0;
+      output.noBike = 0;
       output.powerBarLevel = 0;
       output.batteryBarLevel = 0;
       state = waitingState;
@@ -254,6 +261,8 @@ function onLoad(input, output) {
   output.con = exerciseStarted = registered = state = 0;
   speed = cadence = power = battery = odo = charger = light = undefined;
   output.speed = output.cadence = output.power = output.battery = output.odo = output.charger = output.light = undefined;
+  noBike = 0;
+  output.noBike = 0;
   output.powerBarLevel = 0;
   output.batteryBarLevel = 0;
   maxCad = sumCad = cntCad = undefined;
