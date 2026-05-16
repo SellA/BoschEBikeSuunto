@@ -48,6 +48,9 @@ var connection, registered, exerciseStarted, state;
 var speed, cadence, power, battery, odo, charger, light, ext;
 var maxCad, sumCad, cntCad;
 var maxPow, sumPow, cntPow;
+var powerBarMax, simSweepValue, simSweepDir;
+
+var SIMULATE_SWEEP = true;
 
 var waitingState = 99, readyState = 10;
 
@@ -113,11 +116,87 @@ var loadExt = function(ix) {
   ext = evalFile('{file_path}/ext' + ix + '.js');
 };
 
+var loadSettings = function() {
+  var settings = typeof localStorage !== "undefined" ? localStorage.getObject("appSettings") : undefined;
+  powerBarMax = settings && settings.powerBarMax ? settings.powerBarMax : 500;
+  if (powerBarMax < 100) powerBarMax = 100;
+};
+
+var powerToBarLevel = function(value) {
+  var level;
+  if (value === undefined || powerBarMax === undefined || powerBarMax <= 0) return 0;
+  level = ((value * 10 + powerBarMax - 1) / powerBarMax) | 0;
+  if (level < 0) return 0;
+  if (level > 10) return 10;
+  return level;
+};
+
+var percentToBarLevel = function(value) {
+  var level;
+  if (value === undefined) return 0;
+  level = ((value + 9) / 10) | 0;
+  if (level < 0) return 0;
+  if (level > 10) return 10;
+  return level;
+};
+
+var writeLiveOutputs = function(output) {
+  output.speed   = speed;
+  output.cadence = cadence;
+  output.power   = power;
+  output.battery = battery;
+  output.odo     = odo;
+  output.charger = charger;
+  output.light   = light;
+  output.powerBarLevel = powerToBarLevel(power);
+  output.batteryBarLevel = percentToBarLevel(battery);
+};
+
+var updateStats = function() {
+  if (cadence !== undefined) {
+    if (maxCad === undefined || cadence > maxCad) maxCad = cadence;
+    sumCad = (sumCad || 0) + cadence; cntCad = (cntCad || 0) + 1;
+  }
+  if (power !== undefined) {
+    if (maxPow === undefined || power > maxPow) maxPow = power;
+    sumPow = (sumPow || 0) + power; cntPow = (cntPow || 0) + 1;
+  }
+};
+
+var evaluateSimulation = function(output) {
+  var maxPower = powerBarMax || 500;
+  simSweepValue += simSweepDir * 25;
+  if (simSweepValue >= maxPower) {
+    simSweepValue = maxPower;
+    simSweepDir = -1;
+  } else if (simSweepValue <= 0) {
+    simSweepValue = 0;
+    simSweepDir = 1;
+  }
+
+  speed = ((simSweepValue * 45) / maxPower) | 0;
+  cadence = ((simSweepValue * 120) / maxPower) | 0;
+  power = simSweepValue | 0;
+  battery = ((simSweepValue * 100) / maxPower) | 0;
+  odo = ((simSweepValue * 999) / maxPower) | 0;
+  charger = 0;
+  light = power > (maxPower / 2) ? 1 : 0;
+
+  output.con = 1;
+  writeLiveOutputs(output);
+  if (exerciseStarted) updateStats();
+};
+
 /**
  * evaluate() — called by the Suunto runtime on every sensor tick.
  * Advances the state machine and writes decoded values to the output object.
  */
 function evaluate(input, output) {
+  if (SIMULATE_SWEEP) {
+    evaluateSimulation(output);
+    return;
+  }
+
   switch (state) {
     case 0:
       // Initiate BLE scan + connect (ext1 returns the connection handle)
@@ -141,6 +220,8 @@ function evaluate(input, output) {
       output.con = 0;
       speed = cadence = power = battery = odo = charger = light = undefined;
       output.speed = output.cadence = output.power = output.battery = output.odo = output.charger = output.light = undefined;
+      output.powerBarLevel = 0;
+      output.batteryBarLevel = 0;
       state = waitingState;
       break;
     case 6:
@@ -161,22 +242,9 @@ function evaluate(input, output) {
       break;
     case readyState:
       // Forward latest decoded values to watch outputs every tick
-      output.speed   = speed;
-      output.cadence = cadence;
-      output.power   = power;
-      output.battery = battery;
-      output.odo     = odo;
-      output.charger = charger;
-      output.light   = light;
+      writeLiveOutputs(output);
       // Accumulate stats for end-of-exercise summary
-      if (cadence !== undefined) {
-        if (maxCad === undefined || cadence > maxCad) maxCad = cadence;
-        sumCad = (sumCad || 0) + cadence; cntCad = (cntCad || 0) + 1;
-      }
-      if (power !== undefined) {
-        if (maxPow === undefined || power > maxPow) maxPow = power;
-        sumPow = (sumPow || 0) + power; cntPow = (cntPow || 0) + 1;
-      }
+      updateStats();
       break;
   }
 }
@@ -186,8 +254,13 @@ function onLoad(input, output) {
   output.con = exerciseStarted = registered = state = 0;
   speed = cadence = power = battery = odo = charger = light = undefined;
   output.speed = output.cadence = output.power = output.battery = output.odo = output.charger = output.light = undefined;
+  output.powerBarLevel = 0;
+  output.batteryBarLevel = 0;
   maxCad = sumCad = cntCad = undefined;
   maxPow = sumPow = cntPow = undefined;
+  simSweepValue = 0;
+  simSweepDir = 1;
+  loadSettings();
 }
 
 /** Called when the user starts recording an exercise. */
